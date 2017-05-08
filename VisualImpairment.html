@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<title>Visual Impairment</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="./css/style.css">
+
+<script type="text/javascript" src="scripts/main.js"></script>
+
+<script type="text/javascript">
+  let view = null;
+
+  function initView() {
+    let path = getRootWebSitePath()+"/data/VisualImpairment.csv";
+    let parser = CSVParser.getInstance();
+
+    parser.parseCSV(path);
+
+    parser.parseComplete.attach(function(sender, data) {
+        let model = new DataSetModel(data[0], data[1]);
+        
+        view = new ChartView(model, {
+          'plotDataButton' : document.getElementById("plotData"),
+          'plotTypeElement' : document.getElementById("plotType"),
+          'plotContainer' : document.getElementById("plotContainer"),
+          'seasonList' :  document.getElementById("seasonList"),
+          'groupBySelector' : document.getElementsByName("groupBySelector"),
+          'groupByFieldsDiv' : document.getElementById("groupByFieldsDiv"),
+          'visualContainer' : document.getElementById("visualContainer"),
+          'columnFilterContainer' : document.getElementById("columnFilterContainer"),
+          'rowFilterContainer' : document.getElementById("rowFilterContainer"),
+          'statsButton' : document.getElementById("statsButton"),
+          'dataSetType' : 'VISUAL_IMPAIRMENT'
+        });
+        let controller = new ChartController(model, view);
+        view.initVisualImpairmentView();
+        document.getElementById("plotData").click();
+    });
+  }
+
+  function populateGroupByOptions() {
+    view.populateInfluenzaGroupByOptions();
+  }
+
+  function showStats() {
+    view.showVisualImpairmentStats();
+  }
+
+</script>
+
+<body class="w3-light-grey" onLoad="initView()">
+<!-- Top container -->
+<div id="downloadDataModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close">&times;</span>
+        <h4>Export Influenza Dataset</h4>
+      </div>
+      <div class="modal-body">
+        <a href="" id="linkCSV" onclick="setupDownloadLink(this, 'csv')" download="VisualImpairment.csv">Download CSV file</a> 
+        <br>
+        <a href="" id="linkJSON" onclick="setupDownloadLink(this, 'json')" download="VisualImpairment.json">Download JSON file</a> 
+      </div>
+    </div>
+  </div>
+<div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+   <div class="w3-left"><img src="./images/icon.jpg" width="302" height="70"></div>
+   <span class="w3-bar-item w3-center"><h3 style="margin-left: 250px">Health Stats</h3></span>
+</div>
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:2;width:300px;border-color: black; border: solid;" id="mySidebar"><br>
+  <div class="w3-bar-block w3-padding-32" name="interactionContainer">
+    <ul class="mainmenu">
+    <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Close Menu</a>
+    <a href="#" class="w3-bar-item w3-button w3-padding w3-dark-grey"><i class="fa fa-users fa-fw"></i>  Overview</a>
+    <li><a href="#" class="w3-bar-item w3-button w3-padding">Column Filtering</a>
+      <div id="columnFilterContainer" class="submenu" style="margin-left:10px;padding-left:7px;">
+      </div>
+    </li>
+    <li><a href="#" class="w3-bar-item w3-button w3-padding">Row Filtering</a>
+      <div id="rowFilterContainer" class="submenu" style="margin-left:10px;padding-left:7px;">
+      </div>
+    </li>
+    <li><a href="#" class="w3-bar-item w3-button w3-padding">Plot Type</a>
+      <div class="submenu" style="margin-left:10px;padding-left:7px;">
+        <input type="radio" name="plotType" value="TABLE" checked="checked">&nbsp;&nbsp;Table<br>
+        <input type="radio" name="plotType" value="BAR_CHART">&nbsp;&nbsp;Bar<br>
+        <input type="radio" name="plotType" value="LINE_CHART">&nbsp;&nbsp;Line<br>
+        <input type="radio" name="plotType" value="PIE_CHART">&nbsp;&nbsp;Pie<br>
+        <input type="radio" name="plotType" value="STACKED_CHART">&nbsp;&nbsp;Stacked<br>
+        <input type="radio" name="plotType" value="PIVOT_CHART">&nbsp;&nbsp;Pivot<br>
+      </div>
+    </li>
+    
+  </ul>
+  <div class="w3-container">
+         <button id="plotData" class="button" style="border-radius: 4px; color: black; border-color: black; padding:4px; margin-top: 40px;margin-left: 90px; background-color: white;">Apply
+         </button>
+  </div>
+  <br><br>
+  </div>
+</nav>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:300px;margin-top:43px;">
+
+  <!-- Header -->
+  <div class="w3-container" style="padding-top:50px">
+   <div class="w3-row">
+      <div class="w3-container w3-quarter">
+         <h5><b><i class="fa fa-dashboard"></i> Dashboard</b></h5>
+      </div>
+      <div class="w3-container w3-quarter">
+         <button class="button" id="statsButton" onclick="showStats()" style="border-radius: 4px; color: black; border-color: black; padding:8px; margin-top: 0px; background-color: white;"> Show Statistics</button>
+      </div>
+      <div class="w3-container w3-quarter">
+         <button id="exportDataModalBtn" class="button" style="border-radius: 4px; color: black; border-color: black; padding:8px; margin-top: 0px; background-color: white;"> Export data</button> 
+      </div>
+      <div class="w3-container w3-quarter ">
+         <button class="button" style="border-radius: 4px; color: black; border-color: black; padding:8px; margin-top: 0px; background-color: white;" onclick="location.href='MainPage.html';"><i class="fa fa-home"></i>&nbsp;Home</button></p>
+      </div>
+   </div>
+   </div>
+  
+  <br>
+  <br>
+  <div class="w3-container" id="visualContainer" style="border-color: black;">
+    <canvas id="plotContainer" width="350" height="450"></canvas>
+  </div>
+  </div>
+
+  <br><br>
+  <!-- Footer -->
+  <div class="w3-bar w3-bottom w3-black w3-small" style="z-index:2">
+     <span class="w3-bar-item w3-center"><h5 style="margin-left: 550px">&copy;HealthStats Inc.</h5></span>
+  </div>
+  <!-- End page content -->
+</div>
+
+<script>
+// Get the Sidebar
+var mySidebar = document.getElementById("mySidebar");
+
+// Get the DIV with overlay effect
+var overlayBg = document.getElementById("myOverlay");
+
+// Toggle between showing and hiding the sidebar, and add overlay effect
+function w3_open() {
+    if (mySidebar.style.display === 'block') {
+        mySidebar.style.display = 'none';
+        overlayBg.style.display = "none";
+    } else {
+        mySidebar.style.display = 'block';
+        overlayBg.style.display = "block";
+    }
+}
+
+// Close the sidebar with the close button
+function w3_close() {
+    mySidebar.style.display = "none";
+    overlayBg.style.display = "none";
+}
+var modal = document.getElementById('downloadDataModal');
+
+  // Get the button that opens the modal
+  var btn = document.getElementById("exportDataModalBtn");
+  console.log(document.getElementById("exportDataModalBtn"))
+  // Get the <span> element that closes the modal
+  var span = document.getElementsByClassName("close")[0];
+
+  // When the user clicks the button, open the modal 
+  btn.onclick = function() {
+      modal.style.display = "block";
+  }
+
+  // When the user clicks on <span> (x), close the modal
+  span.onclick = function() {
+      modal.style.display = "none";
+  }
+
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+      if (event.target == modal) {
+          modal.style.display = "none";
+      }
+  }
+</script>
+
+</body>
+</html>
